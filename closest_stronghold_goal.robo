@@ -1,0 +1,220 @@
+<head><version>2.79.26</version></head>
+<Axis_Internet_Camera>
+  <auto_back_light>FALSE</auto_back_light>
+  <auto_exposure>FALSE</auto_exposure>
+  <auto_white_balance>FALSE</auto_white_balance>
+  <camera_type>1</camera_type>
+  <color_level_value>50</color_level_value>
+  <compression_index>5</compression_index>
+  <contrast_value>50</contrast_value>
+  <exposure_value>20</exposure_value>
+  <ip_address>10.24.71.11</ip_address>
+  <is_active>TRUE</is_active>
+  <mirrot>FALSE</mirrot>
+  <password>FRC</password>
+  <port>80</port>
+  <resolution>640x480</resolution>
+  <sharpness_value>50</sharpness_value>
+  <username>FRC</username>
+</Axis_Internet_Camera>
+<VBScript_Program>
+  <auto_reload>TRUE</auto_reload>
+  <continue_on_errors>FALSE</continue_on_errors>
+  <script>gyroAngle = GetVariable("GYRO_ANGLE")
+SetVariable "TEMP_GYRO", gyroAngle
+</script>
+  <source_mode>gui</source_mode>
+  <tab_size_index>1</tab_size_index>
+</VBScript_Program>
+<Color_Threshold>
+  <blue_end>181</blue_end>
+  <blue_start>0</blue_start>
+  <green_end>255</green_end>
+  <green_start>98</green_start>
+  <red_end>92</red_end>
+  <red_start>0</red_start>
+</Color_Threshold>
+<Dilate>
+  <avoid_connection>FALSE</avoid_connection>
+  <count>1</count>
+  <dilate_borders>FALSE</dilate_borders>
+  <kernal_shape>4</kernal_shape>
+</Dilate>
+<Marker>
+  <include_graphics>0</include_graphics>
+  <name>Thresholded</name>
+  <revert_to>Current</revert_to>
+</Marker>
+<Convex_Hull/>
+<Math>
+  <all_channels>TRUE</all_channels>
+  <bias>0</bias>
+  <divisor>1</divisor>
+  <function>2</function>
+  <image1>Current</image1>
+  <image2>Thresholded</image2>
+</Math>
+<Blob_Filter>
+  <create_blob_array_variable>TRUE</create_blob_array_variable>
+  <filters>
+    <tab>
+      <filter>
+        <count_threshold>0</count_threshold>
+        <create_array>0</create_array>
+        <filter_id>8</filter_id>
+        <invert_count>0</invert_count>
+        <invert_threshold>0</invert_threshold>
+        <minimum_size>1000</minimum_size>
+        <weight_threshold>0.5</weight_threshold>
+      </filter>
+      <filter:2>
+        <count_threshold>0</count_threshold>
+        <create_array>0</create_array>
+        <filter_id>56</filter_id>
+        <invert_count>0</invert_count>
+        <invert_threshold>0</invert_threshold>
+        <weight_threshold>0.4</weight_threshold>
+      </filter:2>
+    </tab>
+    <tab:2/>
+    <tab:3/>
+    <tab:4/>
+    <tab:5/>
+    <tab:6/>
+  </filters>
+  <font_size>Normal (10pt)</font_size>
+  <largest_is_background>FALSE</largest_is_background>
+  <show_weights>FALSE</show_weights>
+  <sort_array_on_x>FALSE</sort_array_on_x>
+  <sort_array_on_y>FALSE</sort_array_on_y>
+</Blob_Filter>
+<Colorize>
+  <rgb>#FF0000</rgb>
+</Colorize>
+<Math>
+  <all_channels>TRUE</all_channels>
+  <bias>0</bias>
+  <divisor>1</divisor>
+  <function>1</function>
+  <image1>Source</image1>
+  <image2>Current</image2>
+</Math>
+<VBScript_Program>
+  <auto_reload>TRUE</auto_reload>
+  <continue_on_errors>FALSE</continue_on_errors>
+  <script>blobCount = GetVariable("BLOB_COUNT")
+
+if blobCount &gt; 0 then
+	blobs = GetArrayVariable("BLOBS")
+	gyroAngle = GetVariable("TEMP_GYRO")
+	aimChange = GetVariable("AimChange")
+	halfWidth = GetVariable("IMAGE_WIDTH") / 2
+	crossHairPos = halfWidth + aimChange
+	
+	if blobCount = 1 then
+		targetPos = blobs(0)	
+	else
+		offset0 = abs(blobs(0) - crossHairPos)
+		offset2 = abs(blobs(2) - crossHairPos)
+		if offset0 &lt; offset2 then
+			targetPos = blobs(0)
+		else
+			targetPos = blobs(2)
+		end if
+	end if 
+	
+	pixelOffset = targetPos - crossHairPos
+	angleOffset = pixelOffset * 33.5 / halfWidth
+	gyroTarget = gyroAngle + angleOffset
+	SetVariable "GYRO_TARGET", gyroTarget
+	SetVariable "TARGET_POS", targetPos
+	SetVariable "AimChange", aimChange
+end if
+</script>
+  <source_mode>gui</source_mode>
+  <tab_size_index>1</tab_size_index>
+</VBScript_Program>
+<Display_Arrow>
+  <clear_image>0</clear_image>
+  <color>green</color>
+  <display_as_annotation>0</display_as_annotation>
+  <display_mode_index>0</display_mode_index>
+  <head_thickness>20</head_thickness>
+  <line_thickness>5</line_thickness>
+  <xy_list/>
+  <x_end>[TARGET_POS]</x_end>
+  <x_end_map/>
+  <x_start>[image_width/2+AimChange]</x_start>
+  <x_start_map/>
+  <y_end>[image_height/2]</y_end>
+  <y_end_map/>
+  <y_start>[image_height/2]</y_start>
+  <y_start_map/>
+</Display_Arrow>
+<Display_Rectangle>
+  <clear_image>0</clear_image>
+  <color_index>yellow</color_index>
+  <display_as_annotation>1</display_as_annotation>
+  <display_mode_index>1</display_mode_index>
+  <fill_shape>0</fill_shape>
+  <thickness>1</thickness>
+  <xy_list_map/>
+  <x_1>[image_width/2-150]</x_1>
+  <x_1_map>[image_width/2-50+AimChange]</x_1_map>
+  <x_2>[image_width/2+150]</x_2>
+  <x_2_map>[image_width/2+50+AimChange]</x_2_map>
+  <x_3>200</x_3>
+  <x_3_map>[image_width/2+50+AimChange]</x_3_map>
+  <x_4>100</x_4>
+  <x_4_map>[image_width/2-50+AimChange]</x_4_map>
+  <y_1>100</y_1>
+  <y_1_map>[image_height/2+50]</y_1_map>
+  <y_2>100</y_2>
+  <y_2_map>[image_height/2+50]</y_2_map>
+  <y_3>200</y_3>
+  <y_3_map>[image_height/2-50]</y_3_map>
+  <y_4>200</y_4>
+  <y_4_map>[image_height/2-50]</y_4_map>
+</Display_Rectangle>
+<Display_Line>
+  <clear_image>0</clear_image>
+  <color_index>yellow</color_index>
+  <display_as_annotation>1</display_as_annotation>
+  <display_mode_index>1</display_mode_index>
+  <thickness>2</thickness>
+  <xy_list_map/>
+  <x_end>200</x_end>
+  <x_end_map>[image_width/2+AimChange]</x_end_map>
+  <x_start>100</x_start>
+  <x_start_map>[image_width/2+AimChange]</x_start_map>
+  <y_end>100</y_end>
+  <y_end_map>[image_height]</y_end_map>
+  <y_start>100</y_start>
+  <y_start_map>0</y_start_map>
+</Display_Line>
+<Display_Line>
+  <clear_image>0</clear_image>
+  <color_index>yellow</color_index>
+  <display_as_annotation>1</display_as_annotation>
+  <display_mode_index>1</display_mode_index>
+  <thickness>2</thickness>
+  <xy_list_map/>
+  <x_end>200</x_end>
+  <x_end_map>[image_width]</x_end_map>
+  <x_start>100</x_start>
+  <x_start_map>0</x_start_map>
+  <y_end>100</y_end>
+  <y_end_map>[image_height/2]</y_end_map>
+  <y_start>100</y_start>
+  <y_start_map>[image_height/2]</y_start_map>
+</Display_Line>
+<NetworkTables>
+  <delay>100</delay>
+  <filter_type_index>0</filter_type_index>
+  <hostname>roborio-2471-frc.local</hostname>
+  <port>1735</port>
+  <prefix>/SmartDashboard/</prefix>
+  <variables_to_send>BLOB_COUNT
+GYRO_TARGET</variables_to_send>
+  <variable_type_index>0</variable_type_index>
+</NetworkTables>
