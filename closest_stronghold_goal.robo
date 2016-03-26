@@ -1,4 +1,14 @@
 <head><version>2.79.26</version></head>
+<NetworkTables>
+  <delay>100</delay>
+  <filter_type_index>0</filter_type_index>
+  <hostname>10.24.71.2</hostname>
+  <port>1735</port>
+  <prefix>/SmartDashboard/</prefix>
+  <variables_to_receive>/SmartDashboard/AimChange
+/SmartDashboard/GYRO_ANGLE</variables_to_receive>
+  <variable_type_index>0</variable_type_index>
+</NetworkTables>
 <Axis_Internet_Camera>
   <auto_back_light>FALSE</auto_back_light>
   <auto_exposure>FALSE</auto_exposure>
@@ -30,8 +40,8 @@ SetVariable "TEMP_GYRO", gyroAngle
   <blue_end>181</blue_end>
   <blue_start>0</blue_start>
   <green_end>255</green_end>
-  <green_start>98</green_start>
-  <red_end>92</red_end>
+  <green_start>77</green_start>
+  <red_end>152</red_end>
   <red_start>0</red_start>
 </Color_Threshold>
 <Dilate>
@@ -102,38 +112,49 @@ SetVariable "TEMP_GYRO", gyroAngle
 <VBScript_Program>
   <auto_reload>TRUE</auto_reload>
   <continue_on_errors>FALSE</continue_on_errors>
-  <script>blobCount = GetVariable("BLOB_COUNT")
+  <script>blobCount = GetVariable("BLOB_COUNT")
 
 if blobCount &gt; 0 then
 	blobs = GetArrayVariable("BLOBS")
 	gyroAngle = GetVariable("TEMP_GYRO")
 	aimChange = GetVariable("AimChange")
-	halfWidth = GetVariable("IMAGE_WIDTH") / 2
-	crossHairPos = halfWidth + aimChange
+	halfWidth = GetVariable("IMAGE_WIDTH") / 2
+	crossHairPos = halfWidth - aimChange
 	
 	if blobCount = 1 then
-		targetPos = blobs(0)	
-	else
-		offset0 = abs(blobs(0) - crossHairPos)
-		offset2 = abs(blobs(2) - crossHairPos)
-		if offset0 &lt; offset2 then
-			targetPos = blobs(0)
-		else
-			targetPos = blobs(2)
-		end if
-	end if 
-	
-	pixelOffset = targetPos - crossHairPos
-	angleOffset = pixelOffset * 33.5 / halfWidth
+		targetPos = blobs(0)	
+	else
+		offset0 = abs(blobs(0) - crossHairPos)
+		offset2 = abs(blobs(2) - crossHairPos)
+		if offset0 &lt; offset2 then
+			targetPos = blobs(0)
+		else
+			targetPos = blobs(2)
+		end if
+	end if 
+	
+	pixelOffset = targetPos - crossHairPos
+	angleOffset = pixelOffset * 33.5 / halfWidth
 	gyroTarget = gyroAngle + angleOffset
-	SetVariable "GYRO_TARGET", gyroTarget
+	SetVariable "GYRO_TARGET", gyroTarget
 	SetVariable "TARGET_POS", targetPos
-	SetVariable "AimChange", aimChange
+	SetVariable "AIM_ERROR", pixelOffset	
 end if
 </script>
   <source_mode>gui</source_mode>
   <tab_size_index>1</tab_size_index>
 </VBScript_Program>
+<NetworkTables>
+  <delay>100</delay>
+  <filter_type_index>0</filter_type_index>
+  <hostname>10.24.71.2</hostname>
+  <port>1735</port>
+  <prefix>/SmartDashboard/</prefix>
+  <variables_to_send>AIM_ERROR
+BLOB_COUNT
+GYRO_TARGET</variables_to_send>
+  <variable_type_index>0</variable_type_index>
+</NetworkTables>
 <Display_Arrow>
   <clear_image>0</clear_image>
   <color>green</color>
@@ -168,13 +189,13 @@ end if
   <x_4>100</x_4>
   <x_4_map>[image_width/2-50+AimChange]</x_4_map>
   <y_1>100</y_1>
-  <y_1_map>[image_height/2+50]</y_1_map>
+  <y_1_map>[image_height/2-40+50]</y_1_map>
   <y_2>100</y_2>
-  <y_2_map>[image_height/2+50]</y_2_map>
+  <y_2_map>[image_height/2-40+50]</y_2_map>
   <y_3>200</y_3>
-  <y_3_map>[image_height/2-50]</y_3_map>
+  <y_3_map>[image_height/2-40-50]</y_3_map>
   <y_4>200</y_4>
-  <y_4_map>[image_height/2-50]</y_4_map>
+  <y_4_map>[image_height/2-40-50]</y_4_map>
 </Display_Rectangle>
 <Display_Line>
   <clear_image>0</clear_image>
@@ -204,17 +225,7 @@ end if
   <x_start>100</x_start>
   <x_start_map>0</x_start_map>
   <y_end>100</y_end>
-  <y_end_map>[image_height/2]</y_end_map>
+  <y_end_map>[image_height/2-40]</y_end_map>
   <y_start>100</y_start>
-  <y_start_map>[image_height/2]</y_start_map>
+  <y_start_map>[image_height/2-40]</y_start_map>
 </Display_Line>
-<NetworkTables>
-  <delay>100</delay>
-  <filter_type_index>0</filter_type_index>
-  <hostname>roborio-2471-frc.local</hostname>
-  <port>1735</port>
-  <prefix>/SmartDashboard/</prefix>
-  <variables_to_send>BLOB_COUNT
-GYRO_TARGET</variables_to_send>
-  <variable_type_index>0</variable_type_index>
-</NetworkTables>
