@@ -1,14 +1,4 @@
-<head><version>2.79.26</version></head>
-<NetworkTables>
-  <delay>100</delay>
-  <filter_type_index>0</filter_type_index>
-  <hostname>10.24.71.2</hostname>
-  <port>1735</port>
-  <prefix>/SmartDashboard/</prefix>
-  <variables_to_receive>/SmartDashboard/AimChange
-/SmartDashboard/GYRO_ANGLE</variables_to_receive>
-  <variable_type_index>0</variable_type_index>
-</NetworkTables>
+<head><version>2.80.11</version></head>
 <Axis_Internet_Camera>
   <auto_back_light>FALSE</auto_back_light>
   <auto_exposure>FALSE</auto_exposure>
@@ -27,15 +17,6 @@
   <sharpness_value>50</sharpness_value>
   <username>FRC</username>
 </Axis_Internet_Camera>
-<VBScript_Program>
-  <auto_reload>TRUE</auto_reload>
-  <continue_on_errors>FALSE</continue_on_errors>
-  <script>gyroAngle = GetVariable("GYRO_ANGLE")
-SetVariable "TEMP_GYRO", gyroAngle
-</script>
-  <source_mode>gui</source_mode>
-  <tab_size_index>1</tab_size_index>
-</VBScript_Program>
 <Color_Threshold>
   <blue_end>181</blue_end>
   <blue_start>0</blue_start>
@@ -98,17 +79,15 @@ SetVariable "TEMP_GYRO", gyroAngle
   <sort_array_on_x>FALSE</sort_array_on_x>
   <sort_array_on_y>FALSE</sort_array_on_y>
 </Blob_Filter>
-<Colorize>
-  <rgb>#FF0000</rgb>
-</Colorize>
-<Math>
-  <all_channels>TRUE</all_channels>
-  <bias>0</bias>
-  <divisor>1</divisor>
-  <function>1</function>
-  <image1>Source</image1>
-  <image2>Current</image2>
-</Math>
+<NetworkTables>
+  <delay>100</delay>
+  <filter_type_index>0</filter_type_index>
+  <hostname>10.24.71.2</hostname>
+  <port>1735</port>
+  <prefix>/SmartDashboard/</prefix>
+  <variables_to_receive>/SmartDashboard/AimChange</variables_to_receive>
+  <variable_type_index>0</variable_type_index>
+</NetworkTables>
 <VBScript_Program>
   <auto_reload>TRUE</auto_reload>
   <continue_on_errors>FALSE</continue_on_errors>
@@ -116,7 +95,6 @@ SetVariable "TEMP_GYRO", gyroAngle
 
 if blobCount &gt; 0 then
 	blobs = GetArrayVariable("BLOBS")
-	gyroAngle = GetVariable("TEMP_GYRO")
 	aimChange = GetVariable("AimChange")
 	halfWidth = GetVariable("IMAGE_WIDTH") / 2
 	crossHairPos = halfWidth - aimChange
@@ -134,27 +112,34 @@ if blobCount &gt; 0 then
 	end if 
 	
 	pixelOffset = targetPos - crossHairPos
-	angleOffset = pixelOffset * 33.5 / halfWidth
-	gyroTarget = gyroAngle + angleOffset
-	SetVariable "GYRO_TARGET", gyroTarget
-	SetVariable "TARGET_POS", targetPos
-	SetVariable "AIM_ERROR", pixelOffset	
+	angleOffset = pixelOffset * 30 / halfWidth
+	SetVariable "AIM_ERROR", angleOffset	
 end if
 </script>
   <source_mode>gui</source_mode>
   <tab_size_index>1</tab_size_index>
 </VBScript_Program>
 <NetworkTables>
-  <delay>100</delay>
+  <delay>5</delay>
   <filter_type_index>0</filter_type_index>
   <hostname>10.24.71.2</hostname>
   <port>1735</port>
   <prefix>/SmartDashboard/</prefix>
   <variables_to_send>AIM_ERROR
-BLOB_COUNT
-GYRO_TARGET</variables_to_send>
+BLOB_COUNT</variables_to_send>
   <variable_type_index>0</variable_type_index>
 </NetworkTables>
+<Colorize>
+  <rgb>#FF0000</rgb>
+</Colorize>
+<Math>
+  <all_channels>TRUE</all_channels>
+  <bias>0</bias>
+  <divisor>1</divisor>
+  <function>1</function>
+  <image1>Source</image1>
+  <image2>Current</image2>
+</Math>
 <Display_Arrow>
   <clear_image>0</clear_image>
   <color>green</color>
@@ -165,7 +150,7 @@ GYRO_TARGET</variables_to_send>
   <xy_list/>
   <x_end>[TARGET_POS]</x_end>
   <x_end_map/>
-  <x_start>[image_width/2+AimChange]</x_start>
+  <x_start>[image_width/2-AimChange]</x_start>
   <x_start_map/>
   <y_end>[image_height/2]</y_end>
   <y_end_map/>
@@ -181,13 +166,13 @@ GYRO_TARGET</variables_to_send>
   <thickness>1</thickness>
   <xy_list_map/>
   <x_1>[image_width/2-150]</x_1>
-  <x_1_map>[image_width/2-50+AimChange]</x_1_map>
+  <x_1_map>[image_width/2-50-AimChange]</x_1_map>
   <x_2>[image_width/2+150]</x_2>
-  <x_2_map>[image_width/2+50+AimChange]</x_2_map>
+  <x_2_map>[image_width/2+50-AimChange]</x_2_map>
   <x_3>200</x_3>
-  <x_3_map>[image_width/2+50+AimChange]</x_3_map>
+  <x_3_map>[image_width/2+50-AimChange]</x_3_map>
   <x_4>100</x_4>
-  <x_4_map>[image_width/2-50+AimChange]</x_4_map>
+  <x_4_map>[image_width/2-50-AimChange]</x_4_map>
   <y_1>100</y_1>
   <y_1_map>[image_height/2-40+50]</y_1_map>
   <y_2>100</y_2>
@@ -205,9 +190,9 @@ GYRO_TARGET</variables_to_send>
   <thickness>2</thickness>
   <xy_list_map/>
   <x_end>200</x_end>
-  <x_end_map>[image_width/2+AimChange]</x_end_map>
+  <x_end_map>[image_width/2-AimChange]</x_end_map>
   <x_start>100</x_start>
-  <x_start_map>[image_width/2+AimChange]</x_start_map>
+  <x_start_map>[image_width/2-AimChange]</x_start_map>
   <y_end>100</y_end>
   <y_end_map>[image_height]</y_end_map>
   <y_start>100</y_start>
