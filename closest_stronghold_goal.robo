@@ -91,31 +91,60 @@
 <VBScript_Program>
   <auto_reload>TRUE</auto_reload>
   <continue_on_errors>FALSE</continue_on_errors>
-  <script>blobCount = GetVariable("BLOB_COUNT")
-
-if blobCount &gt; 0 then
-	blobs = GetArrayVariable("BLOBS")
-	aimChange = GetVariable("AimChange")
-	halfWidth = GetVariable("IMAGE_WIDTH") / 2
-	crossHairPos = halfWidth - aimChange
-	
-	if blobCount = 1 then
-		targetPos = blobs(0)	
-	else
-		offset0 = abs(blobs(0) - crossHairPos)
-		offset2 = abs(blobs(2) - crossHairPos)
-		if offset0 &lt; offset2 then
-			targetPos = blobs(0)
-		else
-			targetPos = blobs(2)
-		end if
-	end if 
-	
-	pixelOffset = targetPos - crossHairPos
-	angleOffset = pixelOffset * 20 / halfWidth
+  <script>blobCount = GetVariable("BLOB_COUNT")
+
+
+
+if blobCount &gt; 0 then
+
+	blobs = GetArrayVariable("BLOBS")
+
+	aimChange = GetVariable("AimChange")
+
+	halfWidth = GetVariable("IMAGE_WIDTH") / 2
+
+	crossHairPos = halfWidth - aimChange
+	
+	const PI = 4*atn(1)
+
+	
+
+	if blobCount = 1 then
+
+		targetPos = blobs(0)	
+
+	else
+
+		offset0 = abs(blobs(0) - crossHairPos)
+
+		offset2 = abs(blobs(2) - crossHairPos)
+
+		if offset0 &lt; offset2 then
+
+			targetPos = blobs(0)
+
+		else
+
+			targetPos = blobs(2)
+
+		end if
+
+	end if 
+
+	
+
+	pixelOffset = targetPos - crossHairPos
+
+	'angleOffset = pixelOffset * 20 / halfWidth
+	fov = 67
+	width = GetVariable("IMAGE_WIDTH")
+	
+	angleOffset = atn(2/width *  pixelOffset * tan(fov/2 * PI/180)) * 180/PI
 	SetVariable "AIM_ERROR", angleOffset
-	SetVariable "TARGET_POS", targetPos
-end if
+	SetVariable "TARGET_POS", targetPos
+
+end if
+
 </script>
   <source_mode>gui</source_mode>
   <tab_size_index>1</tab_size_index>
